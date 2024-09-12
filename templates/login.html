@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>登入頁面</title>
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap'>
+  <style>
+    * {
+      font-family: "Poppins";
+    }
+
+    body {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      overflow-y: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #dde5f4;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .screen-1, .screen-2 {
+      background: #f1f7fe;
+      padding: 2em;
+      display: flex;
+      flex-direction: column;
+      border-radius: 30px;
+      box-shadow: 0 0 2em #e6e9f9;
+      gap: 2em;
+      width: 300px;
+    }
+
+    .screen-1 .logo {
+      margin: 0 auto;
+      width: 150px;  /* 調整logo寬度 */
+      height: 150px; /* 調整logo高度 */
+    }
+
+    .screen-1 .email, .screen-1 .password {
+      background: white;
+      box-shadow: 0 0 2em #e6e9f9;
+      padding: 1em;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      border-radius: 20px;
+      color: #4d4d4d;
+    }
+
+    .screen-1 .email {
+      margin-bottom: 1em; /* 增加欄位間距 */
+    }
+
+    .screen-1 .password {
+      margin-bottom: 1.5em; /* 增加password與登入按鈕間距 */
+    }
+
+    .screen-1 .email input, .screen-1 .password input {
+      outline: none;
+      border: none;
+      width: 100%;
+      font-size: 0.9em;
+    }
+
+    .screen-1 .email input::placeholder, .screen-1 .password input::placeholder {
+      color: black;
+      font-size: 0.9em;
+    }
+
+    .screen-1 .email ion-icon, .screen-1 .password ion-icon {
+      color: #4d4d4d;
+    }
+
+    .screen-1 .login {
+      padding: 1em;
+      background: #3e4684;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      width: 100%; /* 增加按鈕寬度 */
+    }
+
+    .screen-1 .login-container {
+      display: flex;
+      justify-content: center;
+    }
+
+    .screen-1 .footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7em;
+      color: #5e5e5e;
+      padding-bottom: 1em;
+    }
+
+    .screen-1 .footer span {
+      cursor: pointer;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #f1f7fe;
+      padding: 2em;
+      border-radius: 20px;
+      box-shadow: 0 0 2em #e6e9f9;
+      width: 400px;
+    }
+
+    .modal-content .close {
+      cursor: pointer;
+      text-align: right;
+      font-size: 1.2em;
+    }
+
+    .modal-content form {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+
+    .modal-content .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+    }
+
+    .modal-content .form-group label {
+      font-size: 0.9em;
+      color: #4d4d4d;
+    }
+
+    .modal-content .form-group input[type="email"],
+    .modal-content .form-group input[type="password"],
+    .modal-content .form-group input[type="text"],
+    .modal-content .form-group input[type="date"],
+    .modal-content .form-group input[type="tel"],
+    .modal-content .form-group select {
+      outline: none;
+      border: 1px solid #ccc;
+      padding: 0.5em;
+      border-radius: 5px;
+      font-size: 0.9em;
+    }
+
+    .modal-content .register {
+      padding: 1em;
+      background: #3e4684;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      width: 100%;
+    }
+
+    .error-message {
+      color: red;
+      text-align: center;
+      font-size: 0.9em;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f7f7f7;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 20px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      width: 50px;
+      height: 50px;
+      margin-right: 20px;
+    }
+
+    label, select {
+      margin-right: 10px;
+    }
+
+    .form-section {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .volume-estimate, .ai-estimate, .image-upload {
+      flex: 1;
+      padding: 20px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      background-color: #f0f0f0;
+    }
+
+    h2 {
+      background-color: #ffff66;
+      padding: 10px;
+      border-radius: 5px;
+      color: black;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 5px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+
+    .upload-box {
+      border: 2px dashed #ddd;
+      padding: 10px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .volume-estimate h2 {
+      background-color: #ffff66;
+      color: black;
+    }
+
+    .ai-estimate h2 {
+      background-color: #ffcc99;
+      color: black;
+    }
+
+    .image-upload h2 {
+      background-color: #ffcc99;
+      color: black;
+    }
+
+    .ai-estimate #savings {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="screen-1">
+    <svg class="logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="150" height="150" viewbox="0 0 640 480" xml:space="preserve">
+      <!-- SVG 內容略 -->
+    </svg>
+    <form id="loginForm" action="/login" method="post" onsubmit="login(event)">
+      <div class="email">
+        <ion-icon name="mail-outline"></ion-icon>
+        <input type="email" name="email" placeholder="Email" required>
+      </div>
+      <div class="password">
+        <ion-icon name="lock-closed-outline"></ion-icon>
+        <input type="password" name="password" placeholder="Password" required>
+      </div>
+      <div class="login-container">
+        <button type="submit" class="login">登入</button>
+      </div>
+    </form>
+    <div class="error-message" id="loginErrorMessage"></div>
+    <div class="footer">
+      <span onclick="openRegisterModal()">註冊</span>
+      <span>忘記密碼？</span>
+    </div>
+  </div>
+
+  <div class="modal" id="registerModal">
+    <div class="modal-content">
+      <div class="close" onclick="closeRegisterModal()">&times;</div>
+      <form id="registerForm" action="/register" method="post" onsubmit="register(event)">
+        <div class="form-group">
+          <label for="register-email">電子郵件 *</label>
+          <input type="email" id="register-email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="register-password">密碼 *</label>
+          <input type="password" id="register-password" name="password" placeholder="6-15碼，英文+數字，大小寫不同" required>
+        </div>
+        <div class="form-group">
+            <label for="register-confirm-password">確認密碼 *</label>
+            <input type="password" id="register-confirm-password" name="confirm_password" placeholder="請再輸入一次密碼" required>
+        </div>
+        <div class="form-group">
+          <label for="register-name">真實姓名 *</label>
+          <input type="text" id="register-name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="register-gender">性別 *</label>
+          <select id="register-gender" name="gender" required>
+            <option value="">請選擇</option>
+            <option value="female">女</option>
+            <option value="male">男</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="register-birthday">生日 *</label>
+          <input type="date" id="register-birthday" name="birthday" required>
+        </div>
+        <div class="form-group">
+          <label for="register-phone">行動電話</label>
+          <input type="tel" id="register-phone" name="phone">
+        </div>
+        <div class="form-group">
+          <label for="register-address">地址</label>
+          <input type="text" id="register-address" name="address">
+        </div>
+        <div class="login-container">
+          <button type="submit" class="register">註冊</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // 開啟註冊模態框
+    function openRegisterModal() {
+      document.getElementById('registerModal').style.display = 'flex';
+    }
+  
+    // 關閉註冊模態框
+    function closeRegisterModal() {
+      document.getElementById('registerModal').style.display = 'none';
+    }
+  
+    // 處理註冊表單提交
+    function register(event) {
+      event.preventDefault();
+      const form = document.getElementById('registerForm');
+      const formData = new FormData(form);
+  
+      fetch('/register', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          closeRegisterModal();  // 註冊成功後關閉模態框
+          // 其他處理
+        } else {
+          // 顯示錯誤訊息
+          alert(data.message || '註冊失敗，請重試');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('註冊失敗，請重試');
+      });
+    }
+
+    // 處理登入表單提交
+    function login(event) {
+      event.preventDefault();
+      const form = document.getElementById('loginForm');
+      const formData = new FormData(form);
+  
+      fetch('/login', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          window.location.href = '/valuation';  // 登入成功後重定向
+        } else {
+          document.getElementById('loginErrorMessage').textContent = data.message || 'EMAIL或密碼錯誤';
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('loginErrorMessage').textContent = '登入失敗，請重試';
+      });
+    }
+  </script>
+</body>
+</html>

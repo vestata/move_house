@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手機相機畫面</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='camera.css') }}">
+</head>
+<body>
+    <h1>相機畫面</h1>
+    <p>說明：相機中的比例尺對應 30 公分。</p>
+    <div class="container">
+        <video id="video" autoplay playsinline></video>
+        <div class="border"></div>
+        <div class="scale" id="scale"></div>
+    </div>
+    <button id="snap-far">遠景</button>
+    <button id="snap-close">近景</button>
+    <button id="snap">拍照</button>
+    <img id="processed" alt="處理後的照片將顯示在這裡"> <!-- 确保这个元素存在 -->
+    <script src="{{ url_for('static', filename='camera.js') }}"></script>
+    <script>
+        const video = document.getElementById('video');
+        const snap = document.getElementById('snap');
+        const snapFar = document.getElementById('snap-far');
+        const snapClose = document.getElementById('snap-close');
+        const processed = document.getElementById('processed');
+        const scale = document.getElementById('scale');
+
+        let currentScale = 'normal';
+
+        const constraints = {
+            video: {
+                facingMode: 'environment' // 使用後置相機
+            }
+        };
+
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(console.error);
+
+        snapFar.addEventListener('click', () => {
+            currentScale = 'far';
+            scale.style.height = '50px'; // 設置比例尺為遠景大小
+        });
+
+        snapClose.addEventListener('click', () => {
+            currentScale = 'close';
+            scale.style.height = '200px'; // 設置比例尺為近景大小
+        });
+
+        snap.addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+
+            const image_data = canvas.toDataURL('image/jpeg');
+            fetch('{{ url_for("process") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ image: image_data, scale: currentScale })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('圖像處理失敗');
+                } else {
+                    processed.src = 'data:image/jpeg;base64,' + data.processed_image;
+                    // store the number of boxes needed in local
+                    localStorage.setItem('ai-large', data.large);
+                    localStorage.setItem('ai-medium', data.medium);
+                    localStorage.setItem('ai-small', data.small);
+                    localStorage.setItem('ai-car-estimate', data.car);
+                    // return to main.html
+                    window.location.href = '{{ url_for("valuation", preserve="true") }}';
+                }
+            })
+            .catch(console.error);
+        });
+    </script>
+</body>
+</html>

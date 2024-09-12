@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>估價系統</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='Valuation.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+            <label for="eval-type">選擇評估類型：</label>
+            <select id="eval-type">
+                <option value="">請選擇</option>
+                <option value="type1">類型1</option>
+                <option value="type2">類型2</option>
+            </select>
+        </div>
+        <div class="form-section">
+            <div class="volume-estimate">
+                <h2>容積計算估價</h2>
+                <form id="volumeForm">
+                    <label for="length">輸入長：</label>
+                    <input type="text" id="length">
+                    <label for="width">輸入寬：</label>
+                    <input type="text" id="width">
+                    <label for="height">輸入高：</label>
+                    <input type="text" id="height">
+                    <label for="large">預估箱數：大</label>
+                    <input type="text" id="large">
+                    <label for="medium">中</label>
+                    <input type="text" id="medium">
+                    <label for="small">小</label>
+                    <input type="text" id="small">
+                    <label for="amount-estimate">金額預估：</label>
+                    <input type="text" id="amount-estimate">
+                </form>
+            </div>
+            <div class="ai-estimate">
+                <h2>AI辨識估價</h2>
+                <form id="aiForm">
+                    <label for="ai-large">預估箱數：大</label>
+                    <input type="text" id="ai-large">
+                    <label for="ai-medium">中</label>
+                    <input type="text" id="ai-medium">
+                    <label for="ai-small">小</label>
+                    <input type="text" id="ai-small">
+                    <label for="hang-box">掛箱</label>
+                    <input type="text" id="hang-box">
+                    <label for="ai-amount-estimate">金額預估：</label>
+                    <input type="text" id="ai-amount-estimate">
+                    <label for="savings">節省金額：</label>
+                    <input type="text" id="savings">
+                </form>
+            </div>
+            <div class="image-upload">
+                <h2>AI辨識物件</h2>
+                <div class="upload-box">
+                    <label for="upload1">上傳照片1</label>
+                    <input type="file" id="upload1">
+                </div>
+                <div class="upload-box">
+                    <label for="upload2">上傳照片2</label>
+                    <input type="file" id="upload2">
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    // Placeholder for form submission logic
+    document.getElementById('volumeForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        // Add your form handling logic here
+    });
+    
+    document.getElementById('aiForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        // Add your form handling logic here
+    });
+    
+    // Example function to connect with LINE BOT API
+    function sendToLineBot(data) {
+        fetch('YOUR_LINE_BOT_API_ENDPOINT', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>   
+</body>
+</html>

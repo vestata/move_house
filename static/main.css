@@ -1,0 +1,139 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f7f7f7;
+}
+
+.container {
+    width: 90%;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    margin-right: 20px;
+}
+
+label, select {
+    margin-right: 10px;
+}
+
+.form-section {
+    display: flex;
+    justify-content: space-between;
+}
+
+.volume-estimate, .ai-estimate, .image-upload {
+    width: 30%;
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+}
+
+h2 {
+    background-color: #ffff66;
+    padding: 10px;
+    border-radius: 5px;
+    color: black;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input[type="text"], input[type="file"] {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.upload-box {
+    border: 2px dashed #ddd;
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.volume-estimate h2 {
+    background-color: #ffff66;
+    color: black;
+}
+
+.ai-estimate h2 {
+    background-color: #ffcc99;
+    color: black;
+}
+
+.image-upload h2 {
+    background-color: #ffcc99;
+    color: black;
+}
+
+.ai-estimate #savings {
+    color: red;
+    font-weight: bold;
+}
+
+.container {
+    padding: 20px; 
+}
+
+.form-section {
+    display: flex;
+    gap: 20px; 
+    margin-bottom: 20px; 
+}
+
+.volume-estimate, .ai-estimate, .image-upload {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.form-section h2 {
+    margin-bottom: 20px;
+}
+
+.form-section label {
+    margin-bottom: 10px; 
+    display: block;
+}
+
+.form-section input, 
+.form-section select, 
+.form-section button, 
+.form-section a.camera-button {
+    margin-bottom: 15px; 
+    width: 100%;
+}
+
+.btn {
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}

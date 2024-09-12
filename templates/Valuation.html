@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>估價系統</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{{ url_for('static', filename='2.png') }}" alt="Logo" class="logo">
+            <label for="eval-type">選擇評估類型：</label>
+            <select id="eval-type">
+                <option value="">請選擇</option>
+                <option value="type1">類型1</option>
+                <option value="type2">類型2</option>
+            </select>
+        </div>
+        <div class="form-section">
+            <div class="volume-estimate">
+                <h2>容積計算估價</h2>
+                <form id="volumeForm" onsubmit="return false;">
+                    <label for="length">輸入長：</label>
+                    <input type="text" id="length" oninput="calculateVolume()" inputmode="numeric">
+                    <label for="width">輸入寬：</label>
+                    <input type="text" id="width" oninput="calculateVolume()" inputmode="numeric">
+                    <label for="height">輸入高：</label>
+                    <input type="text" id="height" oninput="calculateVolume()" inputmode="numeric">
+                    <label for="large">預估箱數：大</label>
+                    <input type="text" id="large" readonly>
+                    <label for="medium">中</label>
+                    <input type="text" id="medium" readonly>
+                    <label for="small">小</label>
+                    <input type="text" id="small" readonly>
+                    <label for="amount-estimate">車：</label>
+                    <input type="text" id="car-estimate" readonly>
+                </form>
+            </div>
+            <div class="ai-estimate">
+                <h2>AI辨識估價</h2>
+                <form id="aiForm">
+                    <label for="ai-large">預估箱數：大</label>
+                    <input type="text" id="ai-large">
+                    <label for="ai-medium">中</label>
+                    <input type="text" id="ai-medium">
+                    <label for="ai-small">小</label>
+                    <input type="text" id="ai-small">
+                    <label for="hang-box">掛箱</label>
+                    <input type="text" id="hang-box">
+                    <label for="ai-car-estimate">車：</label>
+                    <input type="text" id="ai-car-estimate" readonly value="{{ car }}">
+                    <button id="clearButton" class="btn">清空</button>
+                </form>
+            </div>
+            <div class="image-upload">
+                <h2>拍攝</h2>
+                <a href="{{ url_for('camera') }}" class="camera-button btn">拍攝</a>
+                <h2>上傳圖片</h2>
+                <div class="upload-box">
+                    <label for="upload1">上傳照片1</label>
+                    <input type="file" id="upload1">
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <button id="nextButton" class="btn">下一步</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById('nextButton').addEventListener('click', function() {
+            window.location.href = "{{ url_for('proposal') }}";
+        });
+    </script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>

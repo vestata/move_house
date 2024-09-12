@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搬家建議書生成 - 喜客喜生活物流</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-group textarea {
+            height: 100px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            background-color: #555;
+        }
+
+        .output {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            display: none;
+        }
+
+        .image-preview {
+            width: 100%;
+            max-width: 300px;
+            margin-top: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .checkbox-group {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .checkbox-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>搬家建議書生成</h1>
+
+        <form id="movingForm" action="/submit_proposal" method="POST">
+            <div class="form-group">
+                <label for="customerName">顧客姓名:</label>
+                <input type="text" id="customerName" name="customerName" required>
+            </div>
+            <div class="form-group">
+                <label for="contactInfo">聯絡方式 (電話):</label>
+                <input type="text" id="contactInfo" name="contactInfo" required>
+            </div>
+            <div class="form-group">
+                <label for="lineId">LINE ID:</label>
+                <input type="text" id="lineId" name="lineId" required>
+            </div>
+            <div class="form-group">
+                <label for="moveDate">搬家日期:</label>
+                <input type="date" id="moveDate" name="moveDate" required>
+            </div>
+            <div class="form-group">
+                <label for="planType">方案選擇:</label>
+                <select id="planType" name="planType" required onchange="toggleDeluxeOptions()">
+                    <option value="">--請選擇--</option>
+                    <option value="經濟考量型">經濟考量型</option>
+                    <option value="精緻貼心型">精緻貼心型</option>
+                    <option value="全程輕鬆型">全程輕鬆型</option>
+                </select>
+            </div>
+
+            <!-- 精緻貼心型 選項 -->
+            <div id="deluxeOptions" class="hidden">
+                <div class="form-group">
+                    <label for="organizerService">是否需要整理師服務？</label>
+                    <select id="organizerService" name="organizerService" onchange="showOrganizerCost()">
+                        <option value="no">不需要</option>
+                        <option value="yes">需要</option>
+                    </select>
+                </div>
+
+                <div id="organizerCost" class="form-group hidden">
+                    <p>整理師服務費用：850-1,200元/小時 (依整理師專業程度及案件難度調整)</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="storageService">是否需要家財保管服務？</label>
+                    <select id="storageService" name="storageService" onchange="showStorageCost()">
+                        <option value="no">不需要</option>
+                        <option value="yes">需要</option>
+                    </select>
+                </div>
+
+                <div id="storageCost" class="form-group hidden">
+                    <p>家財保管費用：一車次每月保管費3000元，進倉和退倉分別有車次運費計算(另加4,000元進倉費和4,000元退倉費)</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="estimateId">估價編號:</label>
+                <input type="text" id="estimateId" name="estimateId" required>
+            </div>
+            <div class="form-group">
+                <label for="fromAddress">遷出地址:</label>
+                <input type="text" id="fromAddress" name="fromAddress" required>
+            </div>
+            <div class="form-group">
+                <label for="fromType">遷出地點類型:</label>
+                <select id="fromType" name="fromType" required>
+                    <option value="樓梯">樓梯</option>
+                    <option value="電梯">電梯</option>
+                    <option value="透天別墅">透天別墅</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="toAddress">遷入地址:</label>
+                <input type="text" id="toAddress" name="toAddress" required>
+            </div>
+            <div class="form-group">
+                <label for="toType">遷入地點類型:</label>
+                <select id="toType" name="toType" required>
+                    <option value="樓梯">樓梯</option>
+                    <option value="電梯">電梯</option>
+                    <option value="透天別墅">透天別墅</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="moveType">搬遷類型:</label>
+                <select id="moveType" name="moveType" required>
+                    <option value="家庭搬家">家庭搬家</option>
+                    <option value="個人搬家">個人搬家</option>
+                </select>
+            </div>
+            <div class="checkbox-group">
+                <label>搬運狀況:</label>
+                <label><input type="checkbox" name="movingConditions" value="中庭距離超過20米">中庭距離超過20米</label>
+                <label><input type="checkbox" name="movingConditions" value="一樓大廳上下貨">一樓大廳上下貨</label>
+                <label><input type="checkbox" name="movingConditions" value="地下停車場上下貨">地下停車場上下貨</label>
+                <label><input type="checkbox" name="movingConditions" value="樓中樓">樓中樓</label>
+                <label><input type="checkbox" name="movingConditions" value="電梯大樓但還需走樓層">電梯大樓但還需走樓層</label>
+                <label><input type="checkbox" name="movingConditions" value="頂樓加蓋">頂樓加蓋</label>
+                <label><input type="checkbox" name="movingConditions" value="市場或是市集旁(避免營業時段)">市場或是市集旁(避免營業時段)</label>
+                <label><input type="checkbox" name="movingConditions" value="電梯需特別防護">電梯需特別防護</label>
+            </div>
+
+            <div class="checkbox-group">
+                <label>特殊搬運物品:</label>
+                <label><input type="checkbox" name="specialItems" value="保險箱">保險箱</label>
+                <label><input type="checkbox" name="specialItems" value="鋼琴">鋼琴</label>
+                <label><input type="checkbox" name="specialItems" value="魚缸">魚缸</label>
+                <label><input type="checkbox" name="specialItems" value="超重藝術品">超重藝術品</label>
+                <label><input type="checkbox" name="specialItems" value="大型不可拆卸傢俱">大型不可拆卸傢俱</label>
+            </div>
+
+            <div class="checkbox-group">
+                <label>其他搬運需求:</label>
+                <label><input type="checkbox" name="otherNeeds" value="指定入宅時間">指定入宅時間</label>
+                <label><input type="checkbox" name="otherNeeds" value="紙箱購買及配送到府">紙箱購買及配送到府</label>
+                <label><input type="checkbox" name="otherNeeds" value="冰箱冷藏箱(租用)">冰箱冷藏箱(租用)</label>
+                <label><input type="checkbox" name="otherNeeds" value="吊掛衣箱(租/售)">吊掛衣箱(租/售)</label>
+                <label><input type="checkbox" name="otherNeeds" value="家電包裝防護">家電包裝防護</label>
+                <label><input type="checkbox" name="otherNeeds" value="傢俱拆卸包裝(另計費用)">傢俱拆卸包裝(另計費用)</label>
+                <label><input type="checkbox" name="otherNeeds" value="藝術品包裝(另計費用)">藝術品包裝(另計費用)</label>
+                <label><input type="checkbox" name="otherNeeds" value="易碎品包裝(另計費用)">易碎品包裝(另計費用)</label>
+                <label><input type="checkbox" name="otherNeeds" value="專業收納師規劃(另計費用)">專業收納師規劃(另計費用)</label>
+                <label><input type="checkbox" name="otherNeeds" value="人力協助搬運廢棄物(另計費用)">人力協助搬運廢棄物(另計費用)</label>
+                <label><input type="checkbox" name="otherNeeds" value="人力協助收納進箱(另計費用)">人力協助收納進箱(另計費用)</label>
+                <label><input type="checkbox" name="otherNeeds" value="多點卸貨(另計費用)">多點卸貨(另計費用)</label>
+                <label><input type="checkbox" name="otherNeeds" value="吊車搬運(另計費用)">吊車搬運(另計費用)</label>
+                <label><input type="checkbox" name="otherNeeds" value="廢棄物處理(另計費用)">廢棄物處理(另計費用)</label>
+            </div>
+            <div class="form-group">
+                <label for="peopleCount">搬遷人數:</label>
+                <input type="number" id="peopleCount" name="peopleCount" required>
+            </div>
+            <div class="form-group">
+                <label for="furnitureList">家具清單:</label>
+                <textarea id="furnitureList" name="furnitureList" placeholder="例如：家具項目1: [物品描述, 照片數量, 預估大小]" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="panoramaImage">上傳全景圖片:</label>
+                <input type="file" id="panoramaImage" name="panoramaImage" accept="image/*" required>
+                <img id="imagePreview" class="image-preview" src="#" alt="全景圖片預覽" style="display:none;">
+            </div>
+            <div class="form-group">
+                <label for="estimatedCost">搬家費用預估 (金額):</label>
+                <input type="number" id="estimatedCost" name="estimatedCost" required>
+            </div>
+            <div class="form-group">
+                <label for="boxCountLarge">所需紙箱數量 - 大:</label>
+                <input type="number" id="boxCountLarge" name="boxCountLarge" required>
+            </div>
+            <div class="form-group">
+                <label for="boxCountMedium">所需紙箱數量 - 中:</label>
+                <input type="number" id="boxCountMedium" name="boxCountMedium" required>
+            </div>
+            <div class="form-group">
+                <label for="boxCountSmall">所需紙箱數量 - 小:</label>
+                <input type="number" id="boxCountSmall" name="boxCountSmall" required>
+            </div>
+            <div class="form-group">
+                <label for="boxCountWardrobe">所需紙箱數量 - 掛箱:</label>
+                <input type="number" id="boxCountWardrobe" name="boxCountWardrobe" required>
+            </div>
+            <div class="form-group">
+                <label for="truckCount">所需車數:</label>
+                <input type="number" id="truckCount" name="truckCount" required>
+            </div>
+            <div class="form-group">
+                <label for="packingSuggestion">打包建議:</label>
+                <textarea id="packingSuggestion" name="packingSuggestion" placeholder="例如：建議使用標準紙箱包裝所有小型家電" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="boxDelivery">送箱時間與位置:</label>
+                <textarea id="boxDelivery" name="boxDelivery" placeholder="例如：2024/08/15 於遷出地址送達紙箱" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="additionalNotes">其他注意事項:</label>
+                <textarea id="additionalNotes" name="additionalNotes" placeholder="例如：特別注意大型傢俱的防護處理" required></textarea>
+            </div>
+
+            <button type="submit" class="btn">生成搬家建議書</button>
+            <button type="button" id="downloadPDF" class="btn">下載PDF</button>
+        </form>
+
+        <div id="output" class="output">
+            <h2>搬家建議書</h2>
+            <p><strong>顧客姓名:</strong> <span id="outputCustomerName"></span></p>
+            <p><strong>聯絡方式:</strong> <span id="outputContactInfo"></span></p>
+            <p><strong>LINE ID:</strong> <span id="outputLineId"></span></p>
+            <p><strong>搬家日期:</strong> <span id="outputMoveDate"></span></p>
+            <p><strong>方案選擇:</strong> <span id="outputPlanType"></span></p>
+            <p><strong>估價編號:</strong> <span id="outputEstimateId"></span></p>
+            <h3>1. 搬遷地址</h3>
+            <p><strong>遷出地址:</strong> <span id="outputFromAddress"></span></p>
+            <p><strong>遷出地點類型:</strong> <span id="outputFromType"></span></p>
+            <p><strong>遷入地址:</strong> <span id="outputToAddress"></span></p>
+            <p><strong>遷入地點類型:</strong> <span id="outputToType"></span></p>
+            <h3>2. 搬遷資訊</h3>
+            <p><strong>搬遷類型:</strong> <span id="outputMoveType"></span></p>
+            <p><strong>搬遷人數:</strong> <span id="outputPeopleCount"></span></p>
+            <h3>搬運狀況:</h3>
+            <p id="outputMovingConditions"></p>
+            
+            <h3>特殊搬運物品:</h3>
+            <p id="outputSpecialItems"></p>
+
+            <h3>其他搬運需求:</h3>
+            <p id="outputOtherNeeds"></p>
+            <h3>3. 家具清單</h3>
+            <p><span id="outputFurnitureList"></span></p>
+            <h3>4. 全景照片</h3>
+            <p><strong>全景圖片預覽:</strong> <img id="outputPanoramaImage" class="image-preview" src="#" alt="全景圖片"></p>
+            <h3>5. AI估價</h3>
+            <p><strong>搬家費用預估:</strong> <span id="outputEstimatedCost"></span></p>
+            <p><strong>所需紙箱數量:</strong></p>
+            <ul>
+                <li><strong>大箱:</strong> <span id="outputBoxCountLarge"></span></li>
+                <li><strong>中箱:</strong> <span id="outputBoxCountMedium"></span></li>
+                <li><strong>小箱:</strong> <span id="outputBoxCountSmall"></span></li>
+                <li><strong>掛箱:</strong> <span id="outputBoxCountWardrobe"></span></li>
+            </ul>
+            <p><strong>所需車數:</strong> <span id="outputTruckCount"></span></p>
+            <h3>6. 顧客選擇的服務方案</h3>
+            <p><strong>方案名稱:</strong> <span id="outputPlanTypeDetail"></span></p>
+            <h3>7. 建議事項</h3>
+            <p><strong>打包建議:</strong> <span id="outputPackingSuggestion"></span></p>
+            <p><strong>送箱時間與位置:</strong> <span id="outputBoxDelivery"></span></p>
+            <p><strong>其他注意事項:</strong> <span id="outputAdditionalNotes"></span></p>
+        </div>
+    </div>
+
+    <script>
+
+        // 在頁面加載時，從 localStorage 加載數據並填入表單
+        window.onload = function() {
+            document.getElementById('boxCountLarge').value = localStorage.getItem('ai-large') || 0;
+            document.getElementById('boxCountMedium').value = localStorage.getItem('ai-medium') || 0;
+            document.getElementById('boxCountSmall').value = localStorage.getItem('ai-small') || 0;
+            document.getElementById('truckCount').value = localStorage.getItem('ai-car-estimate') || 0.5;
+        };
+
+        function toggleDeluxeOptions() {
+            const planType = document.getElementById('planType').value;
+            const deluxeOptions = document.getElementById('deluxeOptions');
+            if (planType === '精緻貼心型') {
+                deluxeOptions.classList.remove('hidden');
+            } else {
+                deluxeOptions.classList.add('hidden');
+            }
+        }
+
+        function showOrganizerCost() {
+            const organizerService = document.getElementById('organizerService').value;
+            const organizerCost = document.getElementById('organizerCost');
+            if (organizerService === 'yes') {
+                organizerCost.classList.remove('hidden');
+            } else {
+                organizerCost.classList.add('hidden');
+            }
+        }
+
+        function showStorageCost() {
+            const storageService = document.getElementById('storageService').value;
+            const storageCost = document.getElementById('storageCost');
+            if (storageService === 'yes') {
+                storageCost.classList.remove('hidden');
+            } else {
+                storageCost.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('movingForm').addEventListener('submit', function(event) {
+            // 提交表單前顯示搬家建議書
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('資料儲存成功！');
+                    document.getElementById('output').style.display = 'block';
+                    // 清空表單
+                    form.reset();
+                } else {
+                    alert('資料儲存失敗！');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+            // 獲取選項和表單資料
+            const movingConditions = [...document.querySelectorAll('input[name="movingConditions"]:checked')].map(e => e.value).join(", ");
+            const specialItems = [...document.querySelectorAll('input[name="specialItems"]:checked')].map(e => e.value).join(", ");
+            const otherNeeds = [...document.querySelectorAll('input[name="otherNeeds"]:checked')].map(e => e.value).join(", ");
+            
+            // 顯示選項答案
+            document.getElementById('outputMovingConditions').innerText = movingConditions || "無";
+            document.getElementById('outputSpecialItems').innerText = specialItems || "無";
+            document.getElementById('outputOtherNeeds').innerText = otherNeeds || "無";
+
+            // 顯示其他資料
+            document.getElementById('outputCustomerName').innerText = formData.get('customerName');
+            document.getElementById('outputContactInfo').innerText = formData.get('contactInfo');
+            document.getElementById('outputLineId').innerText = formData.get('lineId');
+            document.getElementById('outputMoveDate').innerText = formData.get('moveDate');
+            document.getElementById('outputPlanType').innerText = formData.get('planType');
+            document.getElementById('outputEstimateId').innerText = formData.get('estimateId');
+            document.getElementById('outputFromAddress').innerText = formData.get('fromAddress');
+            document.getElementById('outputFromType').innerText = formData.get('fromType');
+            document.getElementById('outputToAddress').innerText = formData.get('toAddress');
+            document.getElementById('outputToType').innerText = formData.get('toType');
+            document.getElementById('outputMoveType').innerText = formData.get('moveType');
+            document.getElementById('outputPeopleCount').innerText = formData.get('peopleCount');
+            document.getElementById('outputFurnitureList').innerText = formData.get('furnitureList');
+            document.getElementById('outputEstimatedCost').innerText = formData.get('estimatedCost');
+            document.getElementById('outputBoxCountLarge').innerText = formData.get('boxCountLarge');
+            document.getElementById('outputBoxCountMedium').innerText = formData.get('boxCountMedium');
+            document.getElementById('outputBoxCountSmall').innerText = formData.get('boxCountSmall');
+            document.getElementById('outputBoxCountWardrobe').innerText = formData.get('boxCountWardrobe');
+            document.getElementById('outputTruckCount').innerText = formData.get('truckCount');
+            document.getElementById('outputPackingSuggestion').innerText = formData.get('packingSuggestion');
+            document.getElementById('outputBoxDelivery').innerText = formData.get('boxDelivery');
+            document.getElementById('outputAdditionalNotes').innerText = formData.get('additionalNotes');
+
+            // 處理圖片上傳
+            const panoramaImageInput = document.getElementById('panoramaImage');
+            const outputPanoramaImage = document.getElementById('outputPanoramaImage');
+
+            if (panoramaImageInput.files && panoramaImageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    outputPanoramaImage.src = e.target.result;
+                    outputPanoramaImage.style.display = 'block';
+                };
+                reader.readAsDataURL(panoramaImageInput.files[0]);
+            }
+
+            // 顯示搬家建議書
+            document.getElementById('output').style.display = 'block';
+        });
+
+        
+        document.getElementById('downloadPDF').addEventListener('click', function() {
+            const element = document.getElementById('output');
+            html2canvas(element, { scale: 2 }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'px',
+                    format: [canvas.width, canvas.height]
+                });
+                const margin = 20;
+                const imgWidth = pdf.internal.pageSize.getWidth() - margin * 2;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
+
+                const pdfOutput = pdf.output('blob');
+
+                const reader = new FileReader();
+                reader.readAsDataURL(pdfOutput);
+                reader.onloadend = function() {
+                    const base64data = reader.result;
+                    
+                    // pdf發送到後端
+                    fetch('/send_pdf_email', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            pdf: base64data,  
+                            email: 'jklo55345@gmail.com'  // 接收
+                        })
+                    }).then(response => response.json())
+                      .then(data => {
+                          console.log(data.message); 
+                      }).catch(error => {
+                          console.error('Error:', error); 
+                      });
+                };
+
+                pdf.save('搬家建議書.pdf');
+            });
+        });
+
+        document.getElementById('panoramaImage').addEventListener('change', function() {
+            const imagePreview = document.getElementById('imagePreview');
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>

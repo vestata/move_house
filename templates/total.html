@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>喜客喜生活物流</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap'>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: #f8f9fa;
+            padding: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        .logo-container {
+            flex: 1;
+        }
+
+        .logo {
+            max-width: 200px;
+        }
+
+        .main-nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .main-nav ul li {
+            margin: 0 10px;
+            position: relative;
+        }
+
+        .main-nav ul li a {
+            text-decoration: none;
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .main-nav ul li a:hover {
+            background: #007BFF;
+            color: white;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            z-index: 1;
+            min-width: 160px;
+            top: 100%;
+            left: 0;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        #content {
+            padding: 40px 20px;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .content {
+            width: 100%;
+            max-width: 2000px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            height: 70vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content h1 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 3em;
+        }
+
+        .content p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .cta {
+            display: inline-block;
+            text-align: center;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .cta:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            background: #f8f9fa;
+            text-align: left;
+            padding: 10px 20px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+        }
+
+        footer p {
+            margin: 0;
+            color: #333;
+        }
+
+        @media (max-width: 767.98px) {
+            .main-nav ul {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .main-nav ul li {
+                margin: 5px 0;
+            }
+
+            .content h1 {
+                font-size: 2em;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .logo {
+                max-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#" onclick="loadHome()">首頁</a></li>
+                    <li class="dropdown">
+                        <a href="javascript:void(0)" class="dropbtn" onclick="loadSection('services')">服務項目</a>
+                        <div class="dropdown-content">
+                            <a href="#" onclick="loadSection('services_steps')">詳細步驟</a>
+                        </div>
+                    </li>
+                    <li><a href="#" onclick="loadSection('declutter')">斷捨離小祕訣</a></li>
+                    <li><a href="#" onclick="loadSection('large_furniture')">大型家具廢棄物</a></li>
+                    <li class="dropdown">
+                        <a href="javascript:void(0)" class="dropbtn" onclick="loadSection('about')">關於我們</a>
+                        <div class="dropdown-content">
+                            <a href="#" onclick="loadHomeSection('vision')">企業願景</a>
+                            <a href="#" onclick="loadHomeSection('philosophy')">經營理念</a>
+                            <a href="#" onclick="loadHomeSection('chairman')">董事長的話</a>
+                            <a href="#" onclick="loadHomeSection('story')">品牌故事</a>
+                            <a href="#" onclick="loadHomeSection('concept')">生活物流新概念</a>
+                        </div>
+                    </li>
+                    <li><a href="/login">登入</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="content">
+        <div id="home" class="content">
+            <h1>卓越的搬家公司</h1>
+            <a href="#" onclick="loadSection('services')" class="cta">Get A Free Estimate</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 喜客喜生活物流. 版權所有.</p>
+    </footer>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function loadSection(section) {
+            $.post('/load_section', { section: section }, function(data) {
+                $('#content').html(data);
+                $('html, body').animate({
+                    scrollTop: $("#content").offset().top
+                }, 1000);
+            }).fail(function() {
+                alert('Failed to load content. Please try again.');
+            });
+        }
+
+        function loadHome() {
+            $('#content').html(`
+                <div id="home" class="content">
+                    <h1 style="color: black; text-align: center;">卓越的搬家公司</h1>
+                    <a href="#" onclick="loadSection('services')" class="cta">Get A Free Estimate</a>
+                </div>
+            `);
+            $('html, body').animate({
+                scrollTop: $("#content").offset().top
+            }, 1000);
+        }
+
+        function loadHomeSection(sectionId) {
+            $.post('/load_section', { section: 'home' }, function(data) {
+                $('#content').html(data);
+                setTimeout(function() {
+                    $('html, body').animate({
+                        scrollTop: $("#" + sectionId).offset().top
+                    }, 1000);
+                }, 500);
+            }).fail(function() {
+                alert('Failed to load content. Please try again.');
+            });
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.style.display === 'block') {
+                        openDropdown.style.display = 'none';
+                    }
+                }
+            }
+        }
+
+        $(document).ready(function() {
+            $('a[href^="#"]').on('click', function(event) {
+                var target = $(this.getAttribute('href'));
+                if (target.length) {
+                    event.preventDefault();
+                    $('html, body').stop().animate({
+                        scrollTop: target.offset().top
+                    }, 1000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
