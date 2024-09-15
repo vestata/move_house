@@ -58,7 +58,7 @@
             canvas.getContext('2d').drawImage(video, 0, 0);
 
             const image_data = canvas.toDataURL('image/jpeg');
-            fetch('{{ url_for("process") }}', {
+            fetch('https://140.116.179.17:8092/api', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

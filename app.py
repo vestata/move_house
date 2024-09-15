@@ -328,40 +328,27 @@ def camera():
 
 @app.route('/process', methods=['POST'])
 def process():
-    data_url = request.json.get('image')
-    scale = request.json.get('scale', 'normal')
+    try:
+        data_url = request.json.get('image')
+        scale = request.json.get('scale', 'normal')
 
-    if scale == 'far':
-        dist_in_cm = 30.0
-        dist_in_pixel = 50  # 假設這是遠景對應的像素值
-    elif scale == 'close':
-        dist_in_cm = 30.0
-        dist_in_pixel = 200  # 假設這是近景對應的像素值
-    else:
-        dist_in_cm = 30.0
-        dist_in_pixel = 100.0  # 默認值
+        # 呼叫主機B上的 /process API
+        api_url = 'https://140.116.179.17:8092/api'
+        response = requests.post(api_url, verify=False, json={
+            'image': data_url,
+            'scale': scale
+        })
 
-    image_data = base64.b64decode(data_url.split(',')[1])
-    processed_image, items = process_image(image_data, dist_in_cm, dist_in_pixel)
+        # 確認 API 返回成功
+        if response.status_code == 200:
+            data = response.json()
+            return jsonify(data), 200
+        else:
+            return jsonify({'error': 'Failed to process image'}), 500
 
-    if processed_image is None:
-        return jsonify({'error': 'Image processing failed'})
-    print("Processed image generated")
-   
-    print(items)
-    small, medium, large = fit_boxes(items)
-    car_count = float(calculate_car_count(small, medium, large))
-
-    print(f"Returning JSON: small={small}, medium={medium}, large={large}, car={car_count}")
-    
-    return jsonify({
-        'processed_image': processed_image,
-        'small': small,
-        'medium': medium,
-        'large': large,
-        'car': car_count,  # Include car count in response
-        'redirect_url': url_for('home', preserve='true')
-    })
+    except Exception as e:
+        app.logger.error(f"Error calling process API: {e}")
+        return jsonify({'error': 'Internal Server Error'}), 500
 
 @app.route('/proposal')
 @login_required
@@ -399,4 +386,4 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     context = ('cert.pem', 'key.pem')    
-    app.run(debug=True, host='0.0.0.0', port=8091, ssl_context=context)
+    app.run(debug=True, host='0.0.0.0', port=8092, ssl_context=context)

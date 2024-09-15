@@ -33,7 +33,7 @@ document.getElementById('upload1').addEventListener('change', function(event) {
         const reader = new FileReader();
         reader.onload = function(e) {
             const imageData = e.target.result.split(',')[1];
-            fetch('{{ url_for("process") }}', {
+            fetch('https://140.116.179.17:8092/api', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
