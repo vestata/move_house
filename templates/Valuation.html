@@ -4,7 +4,180 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>估價系統</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <style>
+        /* 原有的 CSS 設定 */
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 20px 0 50px 0;
+            min-height: 100vh;
+            box-sizing: border-box;
+            font-size: 18px;
+        }
+
+        .container {
+            width: calc(100% - 200px);
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 15px;
+        }
+
+        /* 新增的媒體查詢，用來支援手機裝置的解析度 */
+        @media (max-width: 768px) {
+            .container {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .form-section {
+                display: flex;
+                justify-content: space-between;
+                gap: 5px;
+                width: 100%;
+            }
+
+            .form-section > div {
+                width: calc(33.333% - 5px);
+                margin: 0;
+            }
+
+            select, option {
+                font-size: 10px;
+            }
+
+            h2, .form-section p {
+                font-size: 12px;
+            }
+
+            .form-section input, .form-section .btn {
+                font-size: 12px;
+            }
+
+            .form-section .upload-box {
+                font-size: 12px;
+            }
+
+            .form-section label, .form-section span {
+                font-size: 12px;
+            }
+
+            .form-section .btn.capture {
+                width: 100px;
+                height: 40px;
+                margin: 0 auto;
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .form-section {
+                gap: 5px;
+            }
+        }
+
+        .header {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        .logo {
+            width: 300px;
+            height: auto;
+            margin-right: 15px;
+            border-radius: 10px;
+        }
+        .select-container {
+            display: flex;
+            align-items: center;
+        }
+        .select-label {
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+        select, input, button {
+            font-family: inherit;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 18px;
+        }
+        .header select {
+            width: 180px;
+        }
+        .form-section {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+        }
+        .form-section > div {
+            width: calc((100% - 60px) / 3);
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+        }
+        .form-section input {
+            width: calc(100% - 22px);
+        }
+        h2 {
+            color: #333;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin-top: 0;
+            font-size: 20px;
+        }
+        .btn {
+            background-color: #a08876;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, border-radius 0.3s;
+            border-radius: 8px;
+        }
+        .btn:hover {
+            background-color: #8a7263;
+            border-radius: 10px;
+        }
+        .image-upload .btn, .ai-estimate .btn {
+            width: 50%;
+            margin: 0 auto;
+            display: block;
+        }
+        .ai-estimate .btn {
+            margin-top: 10px;
+        }
+        .upload-box {
+            border: 2px dashed #ccc;
+            padding: 15px;
+            text-align: center;
+            color: #666;
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+        .footer {
+            margin-top: 25px;
+            text-align: right;
+        }
+        .footer .btn {
+            width: 20%;
+        }
+        .volume-estimate { background-color: #f2f1e4; }
+        .ai-estimate { background-color: #f2ece4; }
+        .image-upload { background-color: #e9f0e7; }
+    </style>
 </head>
 <body>
     <div class="container">
